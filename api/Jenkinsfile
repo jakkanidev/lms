@@ -11,13 +11,13 @@ pipeline {
         stage('Check and Create lms-postgres-container') {
             steps {
                 script {
-                    def postgresContainerExists = sh(script: 'docker ps -a --format "{{.Names}}" | grep -q "lms-postgres-container"', returnStatus: true) == 0
+                    def postgresContainerExists = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-postgres-container"', returnStatus: true) == 0
 
                     if (postgresContainerExists) {
                         echo "lms-postgres-container container already exists, skipping creation"
                     } else {
                         echo "lms-postgres-container container does not exist, creating..."
-                        sh 'docker container run -dt --name lms-postgres-container --network lmsnetwork -p 5432:5432 -e POSTGRES_PASSWORD=password postgres'
+                        sh 'sudo docker container run -dt --name lms-postgres-container --network lmsnetwork -p 5432:5432 -e POSTGRES_PASSWORD=password postgres'
                     }
                 }
             }
