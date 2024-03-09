@@ -27,6 +27,7 @@ pipeline {
 				script {
 					echo 'Building..'
 					withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+						// Log in to Docker Hub
 						sh "sudo docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
 						echo 'logged in to dockerhub'
 
@@ -47,6 +48,35 @@ pipeline {
 					}
 				}
 			}
-		}		
+		}
+        stage('Run Backend Container') {
+            steps {
+                script {
+                    // Load Docker Hub credentials
+                    withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        // Log in to Docker Hub
+                        sh "sudo docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+						echo 'logged in to dockerhub'
+
+						// Read the version from package.json
+						def packageJSON = readJSON file: 'api/package.json'
+						def packageJSONVersion = packageJSON.version
+						echo 'version = ${packageJSONVersion}'
+
+                        // Check if the container exists
+                        def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true) == 0
+
+                        if (containerExists) {
+                            // Stop and remove the existing container
+                            sh 'sudo docker stop lms-backend-container'
+                            sh 'sudo docker rm lms-backend-container'
+                        }
+
+                        // Run the container with the latest image
+                        sh "sudo docker run -d --name lms-backend-container -p 8080:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+                    }
+                }
+            }
+        }		
 	}
 }
