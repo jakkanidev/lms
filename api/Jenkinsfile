@@ -34,7 +34,7 @@ pipeline {
 						// Read the version from package.json
 						def packageJSON = readJSON file: 'api/package.json'
 						def packageJSONVersion = packageJSON.version
-						echo 'version = ${packageJSONVersion}'
+						echo "version = ${packageJSONVersion}"
 
 						// Build and push backend image
 						sh "cd api && sudo docker build -t santhoshjakkani/lms-backend-image:${packageJSONVersion} ."
@@ -61,10 +61,10 @@ pipeline {
 						// Read the version from package.json
 						def packageJSON = readJSON file: 'api/package.json'
 						def packageJSONVersion = packageJSON.version
-						echo 'version = ${packageJSONVersion}'
+						echo "version = ${packageJSONVersion}"
 
                         // Check if the container exists
-                        def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true) == 0
+                        def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true)
 
                         if (containerExists) {
                             // Stop and remove the existing container
