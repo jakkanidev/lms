@@ -5,8 +5,22 @@ pipeline {
         stage('Backend Sonar Analysis') {
             steps {
                 echo 'Code Analyzing..'
-                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.133.109.168:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.16.218.218:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
             }
         }
-	}
+        stage('Check and Create lms-postgres-container') {
+            steps {
+                script {
+                    def postgresContainerExists = sh(script: 'docker ps -a --format "{{.Names}}" | grep -q "lms-postgres-container"', returnStatus: true) == 0
+
+                    if (postgresContainerExists) {
+                        echo "lms-postgres-container container already exists, skipping creation"
+                    } else {
+                        echo "lms-postgres-container container does not exist, creating..."
+                        sh 'docker container run -dt --name lms-postgres-container --network lmsnetwork -p 5432:5432 -e POSTGRES_PASSWORD=password postgres'
+                    }
+                }
+            }
+        }
+	}		
 }
