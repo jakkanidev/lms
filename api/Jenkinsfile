@@ -77,7 +77,7 @@ pipeline {
                         }
 
                         // Container doesn't exist, create it
-                        sh "sudo docker run -d --name lms-backend-container -p 8080:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+                        sh "sudo docker run -d --name lms-backend-container -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
 						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
                     }
                 }
