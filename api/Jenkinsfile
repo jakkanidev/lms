@@ -64,16 +64,18 @@ pipeline {
 						echo "version = ${packageJSONVersion}"
 
                         // Check if the container exists
-                        def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true)
-
-                        if (containerExists) {
+                        //def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true)
+						def containerExistsOutput = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep "lms-backend-container"', returnStdout: true, returnStatus: true)
+                        if (containerExistsOutput) {
                             // Stop and remove the existing container
                             sh 'sudo docker stop lms-backend-container'
                             sh 'sudo docker rm lms-backend-container'
+							echo 'lms-backend-container deleted'
                         }
 
                         // Run the container with the latest image
                         sh "sudo docker run -d --name lms-backend-container -p 8080:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
                     }
                 }
             }
