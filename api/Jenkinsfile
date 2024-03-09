@@ -66,7 +66,7 @@ pipeline {
                         // Check if the container exists
                         //def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true)
 						def containerExistsOutput = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep "lms-backend-container"', returnStdout: true, returnStatus: true)
-                        if (containerExistsOutput) {
+                        if (containerExistsOutput.trim().length() > 0) {
                             // Stop and remove the existing container
                             sh 'sudo docker stop lms-backend-container'
                             sh 'sudo docker rm lms-backend-container'
