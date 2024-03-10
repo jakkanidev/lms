@@ -78,7 +78,8 @@ pipeline {
                         }
 
                         // Container doesn't exist, create it
-                        sh "sudo docker run -d --name lms-backend-container --network lmsnetwork -p 8081:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+                        //sh "sudo docker run -d --name lms-backend-container --network lmsnetwork -p 8081:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+						sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
 						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
                     }
                 }
