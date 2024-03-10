@@ -5,7 +5,7 @@ pipeline {
         stage('Backend Sonar Analysis') {
             steps {
                 echo 'Code Analyzing..'
-                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.145.61.113:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.144.105.17:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
             }
         }
         stage('Check and Create lms-postgres-container') {
@@ -78,8 +78,8 @@ pipeline {
                         }
 
                         // Container doesn't exist, create it
-                        //sh "sudo docker run -d --name lms-backend-container --network lmsnetwork -p 8081:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
-						sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+                        sh "sudo docker run -d --name lms-backend-container --network lmsnetwork -p 8081:8081 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+						//sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
 						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
                     }
                 }
