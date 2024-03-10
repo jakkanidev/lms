@@ -5,7 +5,7 @@ pipeline {
         stage('Backend Sonar Analysis') {
             steps {
                 echo 'Code Analyzing..'
-                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.14.144.250:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.145.61.113:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
             }
         }
         stage('Check and Create lms-postgres-container') {
@@ -68,7 +68,8 @@ pipeline {
 						//def containerExistsOutput = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep "lms-backend-container"', returnStdout: true, returnStatus: true)
                         //if (containerExistsOutput != null && containerExistsOutput.trim().length() > 0) {
 						def containerExists = sh(script: 'sudo docker ps -a --filter name=lms-backend-container --format "{{.Names}}"', returnStdout: true).trim()
-                    
+						
+						echo "container name: ${containerExists}"
 						if (containerExists == 'lms-backend-container') {
                             // Container exists, stop and delete it
                             sh 'sudo docker stop lms-backend-container'
