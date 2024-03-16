@@ -17,20 +17,15 @@ pipeline {
 						sh "sudo docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
 						echo 'logged in to dockerhub'
 
-						// Read the version from package.json
-						def packageJSON = readJSON file: 'api/package.json'
-						def packageJSONVersion = packageJSON.version
-						echo "version = ${packageJSONVersion}"
-
 						// Build and push backend image
-						sh "cd api && sudo docker build -t santhoshjakkani/lms-backend-image:${packageJSONVersion} ."
+						sh "cd api && sudo docker build -t santhoshjakkani/lms-backend-image:1.0 ."
 						echo 'build successfull !!'
-						sh "sudo docker push santhoshjakkani/lms-backend-image:${packageJSONVersion}"
-						echo 'lms-backend-image:${packageJSONVersion} pushed to docker hub'
+						sh "sudo docker push santhoshjakkani/lms-backend-image:1.0"
+						echo 'lms-backend-image:1.0 pushed to docker hub'
 
 						// Delete the local backend image
-						sh "sudo docker rmi santhoshjakkani/lms-backend-image:${packageJSONVersion}"
-						echo 'lms-backend-image:${packageJSONVersion} deleted from local'
+						sh "sudo docker rmi santhoshjakkani/lms-backend-image:1.0"
+						echo 'lms-backend-image:1.0 deleted from local'
 					}
 				}
 			}
@@ -44,11 +39,6 @@ pipeline {
                         sh "sudo docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
 						echo 'logged in to dockerhub'
 
-						// Read the version from package.json
-						def packageJSON = readJSON file: 'api/package.json'
-						def packageJSONVersion = packageJSON.version
-						echo "version = ${packageJSONVersion}"
-
                         // Check if the container exists
 						def containerExists = sh(script: 'sudo docker ps -a --filter name=lms-backend-container --format "{{.Names}}"', returnStdout: true).trim()
 						
@@ -61,9 +51,9 @@ pipeline {
                         }
 
                         // Container doesn't exist, create it
-                        sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8080:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
-						//sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
-						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
+                        sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8080:8080 -e DATABASE_URL=postgresql://postgres:password@172.18.0.2:5432/postgres santhoshjakkani/lms-backend-image:1.0"
+						//sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:1.0"
+						echo "successfully running santhoshjakkani/lms-backend-image:1.0 container"
                     }
                 }
             }
