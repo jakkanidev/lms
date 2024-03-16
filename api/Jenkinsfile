@@ -5,21 +5,7 @@ pipeline {
         stage('Backend Sonar Analysis') {
             steps {
                 echo 'Code Analyzing..'
-                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.144.88.138:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
-            }
-        }
-        stage('Check and Create lms-postgres-container') {
-            steps {
-                script {
-                    def postgresContainerExists = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-postgres-container"', returnStatus: true) == 0
-
-                    if (postgresContainerExists) {
-                        echo "lms-postgres-container container already exists, skipping creation"
-                    } else {
-                        echo "lms-postgres-container container does not exist, creating..."
-                        sh 'sudo docker container run -dt --name lms-postgres-container --network lmsnetwork -p 5432:5432 -e POSTGRES_PASSWORD=password postgres'
-                    }
-                }
+                sh 'cd api && sudo docker run --rm -e SONAR_HOST_URL="http://3.137.222.216:9000" -e SONAR_LOGIN="sqp_04d2ee41b5ef56e17472228407611b06114fbdeb"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
             }
         }
 		stage('Build and Push Backend Image') {
@@ -64,9 +50,6 @@ pipeline {
 						echo "version = ${packageJSONVersion}"
 
                         // Check if the container exists
-                        //def containerExists = sh('sudo docker ps -a --format "{{.Names}}" | sudo grep -q "lms-backend-container"', returnStatus: true)
-						//def containerExistsOutput = sh(script: 'sudo docker ps -a --format "{{.Names}}" | sudo grep "lms-backend-container"', returnStdout: true, returnStatus: true)
-                        //if (containerExistsOutput != null && containerExistsOutput.trim().length() > 0) {
 						def containerExists = sh(script: 'sudo docker ps -a --filter name=lms-backend-container --format "{{.Names}}"', returnStdout: true).trim()
 						
 						echo "container name: ${containerExists}"
@@ -78,7 +61,7 @@ pipeline {
                         }
 
                         // Container doesn't exist, create it
-                        sh "sudo docker run -d --name lms-backend-container --network lmsnetwork -p 8081:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
+                        sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8080:8080 -e DATABASE_URL=postgresql://postgres:password@lms-postgres-container:5432/postgres santhoshjakkani/lms-backend-image:${packageJSONVersion}"
 						//sh "sudo docker container run -dt --name lms-backend-container --network lmsnetwork -p 8081:8080 santhoshjakkani/lms-backend-image:${packageJSONVersion}"
 						echo "successfully running santhoshjakkani/lms-backend-image:${packageJSONVersion} container"
                     }
