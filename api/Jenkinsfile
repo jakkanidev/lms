@@ -1,0 +1,11 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Configure EKS cluster') {
+            steps {
+				sh 'aws eks --region us-east-2 update-kubeconfig --name lms-cluster'
+            }
+        }	
+    }
+}
