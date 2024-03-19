@@ -2,9 +2,19 @@ pipeline {
     agent any
 
     stages {
+        //stage('Configure EKS cluster') {
+        //    steps {
+		//		sh 'aws eks --region us-east-2 update-kubeconfig --name lms-cluster'
+        //    }
         stage('Configure EKS cluster') {
             steps {
 				sh 'aws eks --region us-east-2 update-kubeconfig --name lms-cluster'
+            }			
+        stage('DB secrets object') {
+            steps {
+				sh 'kubectl apply -f lms-postgres-secrets.yml'
+				sh 'kubectl apply -f lms-postgres-deployment.yml'
+				sh 'kubectl apply -f lms-postgres-service.yml'
             }
         }	
     }
