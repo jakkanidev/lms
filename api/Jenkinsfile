@@ -5,8 +5,8 @@ pipeline {
         stage('DB secrets object') {
             steps {
 				sh 'cd api && kubectl apply -f lms-postgres-secrets.yml'
-				sh 'cd api && kubectl apply -f lms-postgres-deployment.yml'
-				sh 'cd api && kubectl apply -f lms-postgres-service.yml'
+				//sh 'cd api && kubectl apply -f lms-postgres-deployment.yml'
+				//sh 'cd api && kubectl apply -f lms-postgres-service.yml'
             }
         }	
     }
